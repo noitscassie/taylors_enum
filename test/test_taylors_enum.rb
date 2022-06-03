@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-class TestTaylorsEnum < Minitest::Test
+class TestTaylorsEnum < ActiveSupport::TestCase
   def setup
     setup_db
   end
@@ -11,7 +11,7 @@ class TestTaylorsEnum < Minitest::Test
     teardown_db
   end
 
-  def test_that_it_has_a_version_number
+  test 'that it has a valid version number' do
     refute_nil ::TaylorsEnum::VERSION
   end
 
