@@ -44,5 +44,24 @@ end
 
 class Album < ActiveRecord::Base
   self.table_name = 'albums'
+end
+
+class AlbumBase < Album
   taylors_enum name: %w[debut fearless speak_now red nineteen_eighty_nine reputation lover folklore evermore]
+end
+
+class AlbumPrefix < Album
+  taylors_enum name: %w[debut fearless speak_now red nineteen_eighty_nine reputation lover folklore evermore], prefix: true
+end
+
+class AlbumSuffix < Album
+  taylors_enum name: %w[debut fearless speak_now red nineteen_eighty_nine reputation lover folklore evermore], suffix: true
+end
+
+class AlbumNoConstants < Album
+  taylors_enum name: %w[debut fearless speak_now red nineteen_eighty_nine reputation lover folklore evermore], constants: false
+end
+
+class AlbumNoValidations < Album
+  taylors_enum name: %w[debut fearless speak_now red nineteen_eighty_nine reputation lover folklore evermore], validations: false
 end
