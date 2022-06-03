@@ -34,6 +34,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency "activesupport", ">= 4.2"
   spec.add_development_dependency "activerecord", ">= 4.2"
   spec.add_development_dependency "pg", "~> 1.2.0"
+  spec.add_development_dependency "pry"
+  spec.add_development_dependency "pry-byebug", "~> 3.9.0"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html

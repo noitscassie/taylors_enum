@@ -16,6 +16,7 @@ require "active_record"
 require "active_support"
 
 require "minitest/autorun"
+require "pry"
 
 db_config = YAML.load_file(File.expand_path("../database.yml", __FILE__)).fetch("postgresql")
 ActiveRecord::Base.establish_connection(db_config)
