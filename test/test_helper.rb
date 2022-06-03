@@ -27,6 +27,12 @@ def setup_db
     t.column :created_at, :datetime
     t.column :updated_at, :datetime
   end
+
+  ActiveRecord::Base.connection.create_table :single_table_inheritance_albums do |t|
+    t.column :type, :string
+    t.column :created_at, :datetime
+    t.column :updated_at, :datetime
+  end
 end
 
 def teardown_db
@@ -64,4 +70,32 @@ end
 
 class AlbumNoValidations < Album
   taylors_enum name: %w[debut fearless speak_now red nineteen_eighty_nine reputation lover folklore evermore], validations: false
+end
+
+module SingleTableInheritanceAlbums
+  class SingleTableInheritanceAlbum < ActiveRecord::Base
+    self.table_name = 'single_table_inheritance_albums'
+
+    taylors_enum type: %w[
+      SingleTableInheritanceAlbums::Debut
+      SingleTableInheritanceAlbums::Fearless
+      SingleTableInheritanceAlbums::SpeakNow
+      SingleTableInheritanceAlbums::Red
+      SingleTableInheritanceAlbums::NineteenEightyNine
+      SingleTableInheritanceAlbums::Reputation
+      SingleTableInheritanceAlbums::Lover
+      SingleTableInheritanceAlbums::Folklore
+      SingleTableInheritanceAlbums::Evermore
+    ], single_table_inheritance: true
+  end
+
+  class Debut < SingleTableInheritanceAlbum; end
+  class Fearless < SingleTableInheritanceAlbum; end
+  class SpeakNow < SingleTableInheritanceAlbum; end
+  class Red < SingleTableInheritanceAlbum; end
+  class NineteenEightyNine < SingleTableInheritanceAlbum; end
+  class Reputation < SingleTableInheritanceAlbum; end
+  class Lover < SingleTableInheritanceAlbum; end
+  class Folklore < SingleTableInheritanceAlbum; end
+  class Evermore < SingleTableInheritanceAlbum; end
 end

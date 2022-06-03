@@ -1,6 +1,6 @@
 require "test_taylors_enum"
 
-class TestDefaultBehavior < TestTaylorsEnum
+class TestDefault < TestTaylorsEnum
   def setup
     super
     @albums_hash = {

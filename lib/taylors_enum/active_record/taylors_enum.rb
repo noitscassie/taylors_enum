@@ -7,6 +7,7 @@ module TaylorsEnum
           suffix: nil, # can be true, false, or a string; if true, will use the column_name as the default value
           constants: true, # can be true or false
           validations: true, # can be true or false; TODO: allow a hash of validations args to be passed
+          single_table_inheritance: false,
           column: nil, # this is set by the first argument passed to taylors_enum
         }.with_indifferent_access.freeze
 
@@ -23,13 +24,30 @@ module TaylorsEnum
 
           define_list_methods!(values, column: enum_column)
           define_constants!(values) if options[:constants].present?
-          enforce_validations!(rails_values: values.keys, column: enum_column) if options[:validations].present?
+          enforce_validations!(values: options[:single_table_inheritance] ? values.values : values.keys, column: enum_column) if options[:validations].present?
 
-          # NOTE: do not care about _prefix and _suffix args here, as we'll have already formatted them in the formatting
-          enum(enum_column => values)
+          if options[:single_table_inheritance]
+            manually_define_enum_methods(values, column: enum_column)
+          else
+            enum(enum_column => values) unless options[:single_table_inheritance]
+          end
+
         end
 
         private
+
+        def manually_define_enum_methods(values, column:)
+          values.each do |rails_value, database_value|
+            # def active?() status == "active" end
+            define_method("#{rails_value}?") { self[column] == database_value }
+
+            # # def active!() update!(status: 0) end
+            define_method("#{rails_value}!") { update!(column => database_value) }
+
+            # scope :active, -> { where(status: 0) }
+            self.scope rails_value, -> { where(column => database_value) }
+          end
+        end
 
         def define_list_methods!(values, column:)
           define_singleton_method("#{column}_rails_values") do
@@ -47,8 +65,8 @@ module TaylorsEnum
           end
         end
 
-        def enforce_validations!(rails_values:, column:)
-          validates column, presence: true, inclusion: { in: rails_values, message: "%{value} is not a valid #{column}" }
+        def enforce_validations!(values:, column:)
+          validates column, presence: true, inclusion: { in: values, message: "%{value} is not a valid #{column}" }
         end
 
         def format_values(values, options:)
@@ -56,7 +74,7 @@ module TaylorsEnum
           suffix = generate_suffix_name(options[:suffix], column: options[:column])
 
           values.map do |value|
-            formatted_value = value.to_s.downcase.underscore
+            formatted_value = value.to_s.demodulize.underscore
             [
               "#{prefix}#{formatted_value}#{suffix}",
               value,
