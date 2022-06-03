@@ -1,0 +1,6 @@
+postgresql:
+  adapter: postgresql
+  username: postgres
+  password:
+  database: taylors_enum
+  min_messages: ERROR
