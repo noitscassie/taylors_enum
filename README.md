@@ -94,7 +94,7 @@ end
 ```
 
 ###### - Enables support for all the enum goodness when enumerating classes for Polymorphic Associations
-Note: this excludes the `<attribute>!` method to update a value, as, as I write this, I can't conceive of a scenario in which you'd want to update just the type, and not also the ID, of an associated object. If you want to do this, you can still do this manually via the `ActiveRecord#update` method.
+Note: this excludes the `<attribute>!` method to update a value, as, as I write this, I can't conceive of a scenario in which you'd want to update just the type, and not also the ID, of an associated object. That doesn't mean you won't ever want to! And if you do, you can still do so manually via the `ActiveRecord#update` [method](https://guides.rubyonrails.org/active_record_basics.html#update).
 
 ```
 class Award < ActiveRecord::Base
