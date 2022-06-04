@@ -9,7 +9,7 @@ module TaylorsEnum
           validations: true, # can be true or false; TODO: allow a hash of validations args to be passed
           single_table_inheritance: false,
           polymorphic: false,
-          column: nil, # this is set by the first argument passed to taylors_enum
+          column: nil # this is set by the first argument passed to taylors_enum
         }.with_indifferent_access.freeze
 
         def taylors_enum(**enum_args)
@@ -38,7 +38,6 @@ module TaylorsEnum
           else
             enum(enum_column => values) unless options[:single_table_inheritance]
           end
-
         end
 
         private
@@ -77,7 +76,7 @@ module TaylorsEnum
         def define_scope(rails_value, database_value, column)
           method_name = rails_value
           detect_method_conflict(column, method_name, class_method: true)
-          self.scope method_name, -> { where(column => database_value) }
+          scope method_name, -> { where(column => database_value) }
         end
 
         def detect_method_conflict(column, method_name, class_method:)
@@ -117,7 +116,7 @@ module TaylorsEnum
             formatted_value = value.to_s.demodulize.underscore
             [
               "#{prefix}#{formatted_value}#{suffix}",
-              value,
+              value
             ]
           end.to_h
         end

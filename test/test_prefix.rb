@@ -1,4 +1,4 @@
-require "test_taylors_enum"
+require 'test_taylors_enum'
 
 class TestPrefix < TestTaylorsEnum
   def setup
@@ -12,7 +12,7 @@ class TestPrefix < TestTaylorsEnum
       'name_reputation' => 'reputation',
       'name_lover' => 'lover',
       'name_folklore' => 'folklore',
-      'name_evermore' => 'evermore',
+      'name_evermore' => 'evermore'
     }
   end
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "test_helper"
+require 'test_helper'
 
 class TestTaylorsEnum < ActiveSupport::TestCase
   def setup
@@ -32,7 +32,7 @@ class TestTaylorsEnum < ActiveSupport::TestCase
 
     refute album.persisted?
     assert_includes album.errors.full_messages, "Name can't be blank"
-    assert_includes album.errors.full_messages, "Name  is not a valid name"
+    assert_includes album.errors.full_messages, 'Name  is not a valid name'
   end
 
   test 'that the column is not allowed to be an unspecified value by default' do

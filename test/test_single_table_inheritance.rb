@@ -1,4 +1,4 @@
-require "test_taylors_enum"
+require 'test_taylors_enum'
 
 class TestSingleTableInheritance < TestTaylorsEnum
   def setup
@@ -12,7 +12,7 @@ class TestSingleTableInheritance < TestTaylorsEnum
       'reputation' => 'SingleTableInheritanceAlbums::Reputation',
       'lover' => 'SingleTableInheritanceAlbums::Lover',
       'folklore' => 'SingleTableInheritanceAlbums::Folklore',
-      'evermore' => 'SingleTableInheritanceAlbums::Evermore',
+      'evermore' => 'SingleTableInheritanceAlbums::Evermore'
     }
   end
 

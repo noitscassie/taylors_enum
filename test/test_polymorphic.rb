@@ -1,11 +1,11 @@
-require "test_taylors_enum"
+require 'test_taylors_enum'
 
 class TestPolymorphic < TestTaylorsEnum
   def setup
     super
     @awardable_hash = {
       'album' => 'Album',
-      'song' => 'Song',
+      'song' => 'Song'
     }
   end
 
