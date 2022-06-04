@@ -1,6 +1,6 @@
-# TaylorsEnum
+# taylors_enum
 
-TaylorsEnum is a gem that builds on top of ActiveRecord's built in [enums](https://api.rubyonrails.org/v5.2.4.4/classes/ActiveRecord/Enum.html#method-i-enum). Specifically, it will:
+taylors_enum is a gem that builds on top of ActiveRecord's built in [enums](https://api.rubyonrails.org/v5.2.4.4/classes/ActiveRecord/Enum.html#method-i-enum). Specifically, it will:
 
 ###### - Define additional methods to make it clearer which values exist in Rails-land, and which in the database
 In Rails:
@@ -14,7 +14,7 @@ end
 => {"debut"=>0, "fearless"=>1, "speak_now"=>2, "red"=>3, "nineteen_eighty_nine"=>4, "reputation"=>5, "lover"=>6, "folklore"=>7, "evermore"=>8}
 ```
 
-With TaylorsEnum:
+With taylors_enum:
 ```
 class AlbumBase < Album
   taylors_enum name: %w[debut fearless speak_now red nineteen_eighty_nine reputation lover folklore evermore]
@@ -128,17 +128,17 @@ end
 
 ## Installation
 
-Install the gem and add to the application's Gemfile by executing:
+Install the gem and add to the application's Gemfile by running:
 
     $ bundle add taylors_enum
 
-If bundler is not being used to manage dependencies, install the gem by executing:
+If bundler is not being used to manage dependencies, install the gem by running:
 
     $ gem install taylors_enum
 
 ## Usage
 
-Using taylors_enum is simple! Once the gem is installed, just add `taylors_enum <my_column>: ['array', 'of', 'values']` to any model that ultimately inherits from `ActiveRecord::Base`.
+Once the gem is installed, add `taylors_enum <my_column>: ['array', 'of', 'values']` to any model that ultimately inherits from `ActiveRecord::Base`.
 
 The values that you pass will be the values that are stored in the database. taylors_enum will then generate a companion for each value that will be used to define constants, `?` methods to check if an object has the given value in the specified column, `!` methods to update the column to that value, and scopes to query for records with that value. See the top of this README for what this looks like in practice.
 
