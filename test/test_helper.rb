@@ -29,6 +29,12 @@ def setup_db
     t.column :updated_at, :datetime
   end
 
+  ActiveRecord::Base.connection.create_table :integer_albums do |t|
+    t.column :name, :integer
+    t.column :created_at, :datetime
+    t.column :updated_at, :datetime
+  end
+
   ActiveRecord::Base.connection.create_table :songs do |t|
     t.column :name, :string
     t.column :created_at, :datetime
@@ -122,4 +128,9 @@ class Award < ActiveRecord::Base
   self.table_name = 'awards'
   belongs_to :awardable, polymorphic: true
   taylors_enum awardable_type: %w[Album Song], polymorphic: true
+end
+
+class IntegerAlbum < ActiveRecord::Base
+  self.table_name = 'integer_albums'
+  taylors_enum name: %w[debut fearless speak_now red nineteen_eighty_nine reputation lover folklore evermore], integer: true
 end

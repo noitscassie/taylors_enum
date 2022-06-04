@@ -7,6 +7,7 @@ module TaylorsEnum
           suffix: nil, # can be true, false, or a string; if true, will use the column_name as the default value
           constants: true, # can be true or false
           validations: true, # can be true or false; TODO: allow a hash of validations args to be passed
+          integer: false, # can be true or false; pass true if the column taylors_enum is called on is an integer value rather than a string
           single_table_inheritance: false,
           polymorphic: false,
           column: nil # this is set by the first argument passed to taylors_enum
@@ -25,7 +26,7 @@ module TaylorsEnum
 
           define_list_methods!(values, column: enum_column)
 
-          define_constants!(values) if options[:constants].present?
+          define_constants!(values, integer: options[:integer]) if options[:constants].present?
 
           # NOTE: when relying on the default rails enum, we validate against the rails-side values, as enum does its own custom validation; however, taylors_enum validates against the database-side values, as it relies on active_record validations
           values_to_validate = options[:single_table_inheritance] || options[:polymorphic] ? values.values : values.keys
@@ -36,7 +37,7 @@ module TaylorsEnum
           elsif options[:polymorphic]
             manually_define_polymorphic_enum_methods(values, column: enum_column)
           else
-            enum(enum_column => values) unless options[:single_table_inheritance]
+            enum(enum_column => values)
           end
         end
 
@@ -109,9 +110,9 @@ module TaylorsEnum
           end
         end
 
-        def define_constants!(values)
+        def define_constants!(values, integer:)
           values.each do |rails_value, database_value|
-            const_set(rails_value.upcase, database_value)
+            const_set(rails_value.upcase, integer ? rails_value : database_value)
           end
         end
 
@@ -123,8 +124,9 @@ module TaylorsEnum
           prefix = generate_prefix_name(options[:prefix], column: options[:column])
           suffix = generate_suffix_name(options[:suffix], column: options[:column])
 
-          values.map do |value|
+          values.map.with_index do |value, index|
             formatted_value = value.to_s.demodulize.underscore
+            value = index if options[:integer]
             [
               "#{prefix}#{formatted_value}#{suffix}",
               value
