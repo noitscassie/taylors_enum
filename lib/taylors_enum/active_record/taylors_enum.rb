@@ -2,6 +2,8 @@ module TaylorsEnum
   module ActiveRecord
     module TaylorsEnum
       module ClassMethods
+        class OptionsConflictError < StandardError; end
+
         DEFAULT_OPTIONS = {
           prefix: nil, # can be true, false, or a string; if true, will use the column_name as the default value
           suffix: nil, # can be true, false, or a string; if true, will use the column_name as the default value
@@ -21,6 +23,8 @@ module TaylorsEnum
             .merge(**options.to_h)
             .merge(column: enum_column)
             .with_indifferent_access
+
+          maybe_raise_options_conflict_errors(options)
 
           values = format_values(raw_values, options: options)
 
@@ -53,6 +57,20 @@ module TaylorsEnum
         end
 
         private
+
+        def maybe_raise_options_conflict_errors(options)
+          raise OptionsConflictError.new(
+            'taylors_enum cannot work for both polymorphic associations and single table inheritance on the same column'
+          ) if options[:single_table_inheritance] && options[:polymorphic]
+
+          raise OptionsConflictError.new(
+            'taylors_enum cannot work for integer columns with single table inheritance'
+          ) if options[:integer] && options[:single_table_inheritance]
+
+          raise OptionsConflictError.new(
+            'taylors_enum cannot work for integer columns with polymorphic associations'
+          ) if options[:integer] && options[:polymorphic]
+        end
 
         def manually_define_single_table_inheritance_enum_methods(values, column:)
           values.each do |rails_value, database_value|
