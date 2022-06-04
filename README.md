@@ -138,11 +138,11 @@ If bundler is not being used to manage dependencies, install the gem by running:
 
 ## Usage
 
-Once the gem is installed, add `taylors_enum <my_column>: ['array', 'of', 'values']` to any model that ultimately inherits from `ActiveRecord::Base`.
+Once the gem is installed, add `taylors_enum <my_column>: ['array', 'of', 'values'], **options` to any model that ultimately inherits from `ActiveRecord::Base`.
 
-The values that you pass will be the values that are stored in the database. taylors_enum will then generate a companion for each value that will be used to define constants, `?` methods to check if an object has the given value in the specified column, `!` methods to update the column to that value, and scopes to query for records with that value. See the top of this README for what this looks like in practice.
+The values that you pass will be the values that are stored in the database - except when passing `integer: true` (see below) in the options; in this case, pass an array of the values you expect to see in the Rails application. taylors_enum will then generate a companion for each value that will be used to define constants, `?` methods to check if an object has the given value in the specified column, `!` methods to update the column to that value, and scopes to query for records with that value. See the top of this README for what this looks like in practice.
 
-taylors_enum also takes a series of options, provided as a hash:
+taylors_enum also takes a series of options, provided as a hash following the specified values:
 - `prefix`: defaults to `nil`. If `true` is passed, the name of the column will be prepended to the start of the helper methods, scopes, and constants. If a string is passed, the given string will be prepended to the start of the helper methods, scopes, and constants.
 
 - `suffix`: defaults to `nil`. If `true` is passed, the name of the column will be appended to the end of the helper methods, scopes, and constants. If a string is passed, the given string will be appended to the end of the helper methods, scopes, and constants.
@@ -153,7 +153,9 @@ taylors_enum also takes a series of options, provided as a hash:
 
 - `single_table_inheritance`: defaults to `false`. When using taylors_enum to help with columns on [Single Table Inheritance](https://api.rubyonrails.org/classes/ActiveRecord/Inheritance.html) models, pass this value as `true`, otherwise things won't work, and then you'll be sad.
 
-- `polymorphic`: defaults to `false`. When using taylors_enum to help with type columns for [polymorphic associations](https://guides.rubyonrails.org/association_basics.html#polymorphic-associations), pass this value as `true`; this will ensure validations are run correctly, against database values rather than Rails values, and will also not create a `!` method to update the value of the column.
+- `polymorphic`: defaults to `false`. When using taylors_enum to help with _type column for [polymorphic associations](https://guides.rubyonrails.org/association_basics.html#polymorphic-associations), pass this value as `true`; this will ensure validations are run correctly, against database values rather than Rails values, and will also not create a `!` method to update the value of the column.
+
+- `integer`: defaults to `false`. When using taylors_enum with an integer column rather than a string column, pass this as `true` to ensure constants, scopes, and helper methods are defined appropriately. Should this be something that can be inferred, rather than needing to be passed explicitly? Absolutely. However, at the time of writing, I can't figure out how to get access to this information at the point that this code is called (in the `ActiveSupport::LazyLoadHooks.on_load` [callback](https://api.rubyonrails.org/classes/ActiveSupport/LazyLoadHooks.html)), so this fudge allows integer columns to function as expected for now.
 
 If you want to see the base Rails value that will be used to generate the `value?` and `value!` methods, that `VALUE` constants, and the `value` scopes, you can load up a Rails console with `rails c`, and run `MyModel.check_rails_value_for(database_value)`. For example:
 ```
