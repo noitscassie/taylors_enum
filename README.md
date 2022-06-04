@@ -155,7 +155,17 @@ taylors_enum also takes a series of options, provided as a hash:
 
 - `polymorphic`: defaults to `false`. When using taylors_enum to help with type columns for [polymorphic associations](https://guides.rubyonrails.org/association_basics.html#polymorphic-associations), pass this value as `true`; this will ensure validations are run correctly, against database values rather than Rails values, and will also not create a `!` method to update the value of the column.
 
-If you want to see the base Rails value that will be used to generate the `value?` and `value!` methods, that `VALUE` constants, and the `value` scopes, you can load
+If you want to see the base Rails value that will be used to generate the `value?` and `value!` methods, that `VALUE` constants, and the `value` scopes, you can load up a Rails console with `rails c`, and run `MyModel.check_rails_value_for(database_value)`. For example:
+```
+class AlbumBase < Album
+  taylors_enum name: %w[debut fearless speak_now red nineteen_eighty_nine reputation lover folklore evermore]
+end
+
+[2] pry(#<TestDefault>)> AlbumBase.check_rails_value_for('folklore')
+=> 'folklore'
+[3] pry(#<TestDefault>)> AlbumBase.check_rails_value_for('folklore', column: :name, prefix: true)
+=> 'name_folklore'
+```
 
 ## Development
 
