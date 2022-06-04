@@ -24,11 +24,17 @@ module TaylorsEnum
           values = format_values(raw_values, options: options)
 
           define_list_methods!(values, column: enum_column)
+
           define_constants!(values) if options[:constants].present?
-          enforce_validations!(values: options[:single_table_inheritance] ? values.values : values.keys, column: enum_column) if options[:validations].present?
+
+          # NOTE: when relying on the default rails enum, we validate against the rails-side values, as enum does its own custom validation; however, taylors_enum validates against the database-side values, as it relies on active_record validations
+          values_to_validate = options[:single_table_inheritance] || options[:polymorphic] ? values.values : values.keys
+          enforce_validations!(values: values_to_validate, column: enum_column) if options[:validations].present?
 
           if options[:single_table_inheritance]
-            manually_define_enum_methods(values, column: enum_column)
+            manually_define_single_table_inheritance_enum_methods(values, column: enum_column)
+          elsif options[:polymorphic]
+            manually_define_polymorphic_enum_methods(values, column: enum_column)
           else
             enum(enum_column => values) unless options[:single_table_inheritance]
           end
@@ -37,17 +43,50 @@ module TaylorsEnum
 
         private
 
-        def manually_define_enum_methods(values, column:)
+        def manually_define_single_table_inheritance_enum_methods(values, column:)
           values.each do |rails_value, database_value|
-            # def active?() status == "active" end
-            define_method("#{rails_value}?") { self[column] == database_value }
-
-            # # def active!() update!(status: 0) end
-            define_method("#{rails_value}!") { update!(column => database_value) }
-
-            # scope :active, -> { where(status: 0) }
-            self.scope rails_value, -> { where(column => database_value) }
+            define_boolean_method(rails_value, database_value, column)
+            define_update_method(rails_value, database_value, column)
+            define_scope(rails_value, database_value, column)
           end
+        end
+
+        # NOTE: skip defining the update method for polymorphic, as it makes little sense to update the associated type without also updating the corresponding id
+        def manually_define_polymorphic_enum_methods(values, column:)
+          values.each do |rails_value, database_value|
+            define_boolean_method(rails_value, database_value, column)
+            define_scope(rails_value, database_value, column)
+          end
+        end
+
+        # def active?() status == "active" end
+        def define_boolean_method(rails_value, database_value, column)
+          method_name = "#{rails_value}?"
+          detect_method_conflict(column, method_name, class_method: false)
+          define_method(method_name) { self[column] == database_value }
+        end
+
+        # def active!() update!(status: :active) end
+        def define_update_method(rails_value, database_value, column)
+          method_name = "#{rails_value}!"
+          detect_method_conflict(column, method_name, class_method: false)
+          define_method(method_name) { update!(column => database_value) }
+        end
+
+        # scope :active, -> { where(status: :active) }
+        def define_scope(rails_value, database_value, column)
+          method_name = rails_value
+          detect_method_conflict(column, method_name, class_method: true)
+          self.scope method_name, -> { where(column => database_value) }
+        end
+
+        def detect_method_conflict(column, method_name, class_method:)
+          send(
+            :detect_enum_conflict!,
+            column,
+            method_name,
+            class_method,
+          )
         end
 
         def define_list_methods!(values, column:)

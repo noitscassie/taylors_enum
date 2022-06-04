@@ -32,17 +32,18 @@ class TestPolymorphic < TestTaylorsEnum
     assert award.album?
   end
 
-  # NOTE: i really have no idea why you would want to do this, as updating the type of an associated object without updating the ID reference as well makes little sense to me, but it's here if you want it hun xo
-  test 'that enum ! methods work as expected' do
+  test 'that enum ! methods do not exist' do
     song = Song.create!
     award = Award.create!(awardable: song)
-    award.album!
-    assert award.album?
+    assert_raises(NoMethodError) do
+      award.album!
+    end
 
     album = AlbumBase.create!(name: :folklore)
     award = Award.create!(awardable: album)
-    award.song!
-    assert award.song?
+    assert_raises(NoMethodError) do
+      award.song!
+    end
   end
 
   test 'that enum scope methods work as expected' do
