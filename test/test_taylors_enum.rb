@@ -47,4 +47,46 @@ class TestTaylorsEnum < ActiveSupport::TestCase
       AlbumNoValidations.create!(name: nil)
     end
   end
+
+  test '#check_rails_value_for will return the rails value generated for a given database value' do
+    # as a standard enum
+    rails_value = AlbumBase.check_rails_value_for('lover')
+    assert_equal 'lover', rails_value
+
+    # with the default prefix
+    rails_value = AlbumBase.check_rails_value_for('lover', column: :name, prefix: true)
+    assert_equal 'name_lover', rails_value
+
+    # with a custom prefix
+    rails_value = AlbumBase.check_rails_value_for('lover', prefix: 'title')
+    assert_equal 'title_lover', rails_value
+
+    # with the default suffix
+    rails_value = AlbumBase.check_rails_value_for('lover', column: :name, suffix: true)
+    assert_equal 'lover_name', rails_value
+
+    # with a custom suffix
+    rails_value = AlbumBase.check_rails_value_for('lover', suffix: 'title')
+    assert_equal 'lover_title', rails_value
+
+    # for a modulised class name
+    rails_value = AlbumBase.check_rails_value_for('Albums::Lover')
+    assert_equal 'lover', rails_value
+
+    # with the default prefix with a modulised class name
+    rails_value = AlbumBase.check_rails_value_for('Albums::Lover', column: :name, prefix: true)
+    assert_equal 'name_lover', rails_value
+
+    # with a custom prefix with a modulised class name
+    rails_value = AlbumBase.check_rails_value_for('Albums::Lover', prefix: 'title')
+    assert_equal 'title_lover', rails_value
+
+    # with the default suffix with a modulised class name
+    rails_value = AlbumBase.check_rails_value_for('Albums::Lover', column: :name, suffix: true)
+    assert_equal 'lover_name', rails_value
+
+    # with a custom suffix with a modulised class name
+    rails_value = AlbumBase.check_rails_value_for('Albums::Lover', suffix: 'title')
+    assert_equal 'lover_title', rails_value
+  end
 end

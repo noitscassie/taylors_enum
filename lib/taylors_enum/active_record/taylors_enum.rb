@@ -40,6 +40,17 @@ module TaylorsEnum
           end
         end
 
+        def check_rails_value_for(database_value, column: nil, prefix: nil, suffix: nil)
+          format_values(
+            [database_value],
+            options: {
+              column: column,
+              prefix: prefix,
+              suffix: suffix
+            },
+          ).keys.first
+        end
+
         private
 
         def manually_define_single_table_inheritance_enum_methods(values, column:)
