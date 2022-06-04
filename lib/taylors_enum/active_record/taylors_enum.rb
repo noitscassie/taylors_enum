@@ -8,6 +8,7 @@ module TaylorsEnum
           constants: true, # can be true or false
           validations: true, # can be true or false; TODO: allow a hash of validations args to be passed
           single_table_inheritance: false,
+          polymorphic: false,
           column: nil, # this is set by the first argument passed to taylors_enum
         }.with_indifferent_access.freeze
 

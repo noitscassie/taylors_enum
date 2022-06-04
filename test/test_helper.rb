@@ -28,8 +28,21 @@ def setup_db
     t.column :updated_at, :datetime
   end
 
+  ActiveRecord::Base.connection.create_table :songs do |t|
+    t.column :name, :string
+    t.column :created_at, :datetime
+    t.column :updated_at, :datetime
+  end
+
   ActiveRecord::Base.connection.create_table :single_table_inheritance_albums do |t|
     t.column :type, :string
+    t.column :created_at, :datetime
+    t.column :updated_at, :datetime
+  end
+
+  ActiveRecord::Base.connection.create_table :awards do |t|
+    t.column :awardable_type, :string
+    t.column :awardable_id, :string
     t.column :created_at, :datetime
     t.column :updated_at, :datetime
   end
@@ -98,4 +111,14 @@ module SingleTableInheritanceAlbums
   class Lover < SingleTableInheritanceAlbum; end
   class Folklore < SingleTableInheritanceAlbum; end
   class Evermore < SingleTableInheritanceAlbum; end
+end
+
+class Song < ActiveRecord::Base
+  self.table_name = 'songs'
+end
+
+class Award < ActiveRecord::Base
+  self.table_name = 'awards'
+  belongs_to :awardable, polymorphic: true
+  taylors_enum awardable_type: %w[Album Song], polymorphic: true
 end
